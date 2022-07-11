@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./css/meeting.css">
+    <script src="https://kit.fontawesome.com/9bb8a25212.js" crossorigin="anonymous"></script>
+    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
+</head>
+
+<body class="bg-neutral-800 text-white">
+    <main class="flex flex-nowrap flex-col justify-between h-screen w-screen items-stretch font-sans">
+        <section id="message-box" style="visibility: hidden;"
+            class="fixed inset-0 bg-[#00000099] z-10 flex justify-center items-center">
+        </section>
+        <section id='username-popup' class="fixed inset-0 bg-neutral-100 z-20 flex justify-center items-center">
+            <div class="p-6 bg-white shadow-md text-neutral-600">
+                <h2 class="mb-6 font-bold text-center text-lg">Enter Your Username</h2>
+                <input class="text-sm [outline:none] border-solid border-b-2 border-blue-600"
+                    placeholder="username"></input>
+                <div class="w-full flex justify-end mt-4 font-bold"><button id='close-username-popup'
+                        class="text-blue-600 p-2">OK</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="flex-auto flex flex-nowrap flex-row items-stretch overflow-auto">
+            <main id="video-container" class="flex-auto overflow-auto flex justify-center items-center p-2">
+                <div id="user-container" class="hidden w-full h-full">
+                    <div id="my-container" class="w-full h-full min-w-[256px] min-h-48 bg-black relative">
+                        <div class="w-full h-full flex items-center justify-center">
+                            <video id="my-media" class="w-full h-full" autoplay playsinline>
+                            </video>
+                        </div>
+                        <h3 id="my-name"
+                            class="max-w-full absolute p-4 bottom-0 left-0 overflow-hidden text-ellipsis whitespace-nowrap">
+                            You </h3>
+                        <div class="mic-icon absolute p-3 bottom-0 right-0 cursor-pointer text-red-600">
+                            <i class="fa-solid fa-microphone-slash"></i>
+                        </div>
+                        <div class="vid-icon absolute top-[50%] left-[50%] [transform:translate(-50%,-50%)]"><i
+                                class="fa-solid fa-video-slash fa-5x"></i></div>
+                    </div>
+                </div>
+                <div id="whiteboard-container" class=" w-full h-full m-w-48 m-h-48 bg-white relative">
+                    <canvas id="whiteboard" class="bg-white" height="1000" width="1000"></canvas>
+                    <div
+                        class="absolute left-2 top-1 bottom-1 flex flex-col flex-nowrap overflow-auto justify-center gap-2">
+                        <div class="bg-black w-9 h-9 rounded-full cursor-pointer" onclick="setColor('black')"></div>
+                        <div class="bg-red-600 w-9 h-9 rounded-full cursor-pointer"
+                            onclick="setColor('rgb(220,38,38)')"></div>
+                        <div class="bg-yellow-400 w-9 h-9 rounded-full cursor-pointer" onclick="setColor('#f1c40f')">
+                        </div>
+                        <div class="bg-green-500 w-9 h-9 rounded-full cursor-pointer" onclick="setColor('#badc58')">
+                        </div>
+                        <div class="bg-blue-600 w-9 h-9 rounded-full cursor-pointer" onclick="setColor('#3498db')">
+                        </div>
+                        <div class="bg-orange-600 w-9 h-9 rounded-full cursor-pointer" onclick="setColor('#e67e22')">
+                        </div>
+                        <div class="bg-purple-600 w-9 h-9 rounded-full cursor-pointer" onclick="setColor('#9b59b6')">
+                        </div>
+                        <div class="bg-pink-600 w-9 h-9 rounded-full cursor-pointer" onclick="setColor('#fd79a8')">
+                        </div>
+                        <div class="bg-amber-800 w-9 h-9 rounded-full cursor-pointer" onclick="setColor('#834c32')">
+                        </div>
+                        <div class="bg-neutral-500 w-9 h-9 rounded-full cursor-pointer" onclick="setColor('gray')">
+                        </div>
+                        <div class="text-black w-9 h-9 rounded-full cursor-pointer flex justify-center items-center"
+                            onclick="setEraser()"><i class="fa-solid fa-xl fa-eraser"></i>
+                        </div>
+                        <div class="text-black w-9 h-9 rounded-full cursor-pointer flex justify-center items-center"
+                            onclick="clearBoard()"><i class="fa-solid fa-xl fa-trash-can"></i></div>
+                    </div>
+                </div>
+            </main>
+            <aside id='sidebar' class="basis-96 grow-0 shrink-0 p-2 text-neutral-600">
+                <div id='meeting_info'
+                    class="bg-neutral-100 h-full rounded-md flex flex-col flex-nowrap items-stretch gap-2">
+                    <header class="flex flex-row flex-nowrap justify-between items-center p-4">
+                        <h1 class="font-bold text-lg ">Meeting Details</h1>
+                        <button
+                            class="close-btn h-10 w-10 hover:bg-white hover:shadow-md flex justify-center items-center"
+                            class="font-bold cursor-pointer w-10 h-10 hover:bg-white hover:shadow-md flex justify-center items-center">
+                            <i class="fa-solid fa-lg fa-times"></i>
+                        </button>
+                    </header>
+                    <main class="text-sm flex flex-col flex-nowrap">
+                        <h2 class="font-bold px-4 py-1">Joining Info</h2>
+                        <div id="show-link" class="px-4 py-1">link</div>
+                        <div class="px-4 py-1 my-2">
+                            <button id="copy_link_button" class="p-2 bg-blue-600 rounded-sm text-white text-left">
+                                <i class="fa-regular fa-copy"></i> Copy Link
+                            </button>
+                        </div>
+                    </main>
+                </div>
+                <div id="participants_list"
+                    class='hidden bg-neutral-100 h-full rounded-md flex-col flex-nowrap overflow-hidden gap-4'>
+                    <div class="flex-none flex flex-row flex-nowrap justify-between items-center p-4">
+                        <h1 class="font-bold text-lg">People</h1>
+                        <button
+                            class="close-btn h-10 w-10 hover:bg-white hover:shadow-md flex justify-center items-center"
+                            class="font-bold cursor-pointer w-10 h-10 hover:bg-white hover:shadow-md flex justify-center items-center">
+                            <i class='fa-solid fa-lg fa-times'></i>
+                        </button>
+                    </div>
+                    <div
+                        class="flex-none flex flex-row flex-nowrap justify-between items-center mx-2 px-4 py-2 bg-white rounded-full drop-shadow-lg gap-3">
+                        <i class='fa-solid fa-magnifying-glass flex-none'></i>
+                        <input type="text" placeholder=' search' class="[outline:none] flex-auto" />
+                    </div>
+                    <div class='font-bold px-4'>In Call</div>
+                    <div id="participant-container"
+                        class='flex-auto flex flex-col flex-nowrap overflow-auto gap-2 mb-1'>
+                    </div>
+                </div>
+                <div id="messenger"
+                    class="hidden bg-neutral-100 h-full rounded-md flex-col flex-nowrap overflow-auto gap-6">
+                    <div class="flex-none flex flex-row flex-nowrap justify-between items-center p-4">
+                        <h1 class="font-bold text-lg">In-call Messages</h1>
+                        <button
+                            class="close-btn h-10 w-10 hover:bg-white hover:shadow-md flex justify-center items-center"
+                            class="font-bold cursor-pointer w-10 h-10 hover:bg-white hover:shadow-md flex justify-center items-center">
+                            <i class='fa-solid fa-lg fa-times'></i>
+                        </button>
+                    </div>
+
+                    <div
+                        class="flex-none text-sm bg-neutral-300 rounded-md p-2 mx-2 leading-loose tracking-wide text-center">
+                        Messages can be seen only by people in the call and are deleted when the call ends
+                    </div>
+
+                    <div id="msg-container" class="flex-auto flex flex-col flex-nowrap overflow-auto px-4 gap-6">
+
+                    </div>
+
+                    <div
+                        class="flex-none flex flex-row flex-nowrap justify-between items-center m-2 px-4 py-2 bg-white rounded-full drop-shadow-lg">
+                        <input id="msg-txt" class="[outline:none]" placeholder="Send a message to everyone" />
+                        <button id="send-msg-btn"><i class='fa-solid fa-paper-plane'></i></button>
+                    </div>
+                </div>
+            </aside>
+        </section>
+        <section class="flex-none flex flex-nowrap flex-row items-center justify-between py-2 overflow-auto">
+            <div class="flex-initial p-4 text-ellipsis whitespace-nowrap overflow-hidden">
+                <div id="meetin_id_and_time">
+                    <span id="show-time"></span> <span class="text-neutral-500 mx-1">|</span>
+                    <span id="show-meeting-id">meeting-id</span>
+                </div>
+            </div>
+            <div class="flex-none flex flex-row flex-nowrap justify-center gap-2 px-4">
+                <button id="mic-toggle"
+                    class="w-12 h-12 text-lg rounded-full bg-[#ffffff10] cursor-pointer hover:bg-[#ffffff30] flex justify-center items-center">
+                    <i class="fa-solid fa-microphone"></i>
+                </button>
+                <button id="video-toggle"
+                    class="w-12 h-12 text-lg rounded-full bg-[#ffffff10] cursor-pointer hover:bg-[#ffffff30] flex justify-center items-center">
+                    <i class="fa-solid fa-video"></i>
+                </button>
+                <button id="screen-share-toggle"
+                    class="w-12 h-12 text-lg rounded-full bg-[#ffffff10] cursor-pointer hover:bg-[#ffffff30] flex justify-center items-center">
+                    <i class="fa-solid fa-display"></i>
+                </button>
+                <button id="whiteboard-toggle"
+                    class="w-12 h-12 text-lg rounded-full bg-[#ffffff10] cursor-pointer hover:bg-[#ffffff30] flex justify-center items-center">
+                    <i class="fa-solid fa-pen"></i>
+                </button>
+                <button id="end-call"
+                    class="w-12 h-12 text-lg rounded-full bg-red-500 cursor-pointer hover:bg-red-400 flex justify-center items-center">
+                    <i class="fa-solid fa-phone"></i>
+                </button>
+            </div>
+            <div class="flex-none flex flex-row flex-nowrap justify-center gap-2 px-4">
+                <button id="show_meeting_info"
+                    class="w-12 h-12 text-lg cursor-pointer rounded-full hover:bg-[#ffffff30] flex justify-center items-center">
+                    <i class="fa-solid fa-info-circle"></i>
+                </button>
+                <button id="show_participants_list"
+                    class="w-12 h-12 text-lg cursor-pointer rounded-full hover:bg-[#ffffff30] flex justify-center items-center">
+                    <i class="fa-solid fa-user-group"></i>
+                </button>
+                <button id="show_messenger"
+                    class="w-12 h-12 text-lg cursor-pointer rounded-full hover:bg-[#ffffff30] flex justify-center items-center">
+                    <i class="fa-solid fa-message"></i>
+                </button>
+            </div>
+        </section>
+    </main>
+    <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="./js/connect.js"></script>
+    <script src="./js/meeting.js"></script>
+</body>
+
+</html>
