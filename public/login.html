@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Meet, Free Meeting Anytime</title>
+    <link rel="stylesheet" href="./css/main.css">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+
+<body style="background-image: linear-gradient(315deg, #f8f9d2 0%, #e8dbfc 74%);"
+    class="bg-neutral-100 z-20 flex justify-center items-center w-screen h-screen overflow-auto">
+    <main class="p-6 bg-white shadow-md text-neutral-600">
+        <h2 class="mb-6 font-bold text-center text-2xl">Login To Continue</h2>
+        <p class="mb-6 text-sm text-center">Please sign in to join the meeting.</p>
+        <div id="g_id_onload" data-client_id="33472686131-rr8moelb9qtivchpag7p7jnpg8ual977.apps.googleusercontent.com"
+            data-login_uri="/auth/google" data-auto_prompt="false">
+        </div>
+        <div class="g_id_signin" data-type="standard" data-size="large" data-theme="filled_blue"
+            data-text="sign_in_with" data-shape="rectangular" data-logo_alignment="left">
+        </div>
+    </main>
+
+    <script>
+        let url = new URL(window.location);
+        let id = url.searchParams.get('id');
+
+        if (id) {
+            document.querySelector('#g_id_onload').dataset.login_uri = `${url.origin}/auth/google?id=${id}`;
+        }
+
+    </script>
+</body>
+
+</html>

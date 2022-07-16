@@ -5,67 +5,69 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="./css/index.css">
+    <title>Google Meeting, Free Meetings Anytime</title>
     <script src="https://kit.fontawesome.com/9bb8a25212.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="./css/main.css">
 </head>
 
-<body>
-    <div class="container">
-        <div class="header">
-            <div class="logo">
-                <img src="https://www.gstatic.com/meet/google_meet_horizontal_wordmark_2020q4_2x_icon_124_40_292e71bcb52a56e2a9005164118f183b.png"
+<body class="lg:h-screen overflow-visible">
+    <div class="lg:h-full flex flex-col flex-nowrap text-neutral-500">
+        <div class="flex-none flex flex-row flex-wrap justify-between">
+            <div class="flex flex-row flex-nowrap gap-2 p-2">
+                <img class="h-9"
+                    src="https://www.gstatic.com/meet/google_meet_horizontal_wordmark_2020q4_2x_icon_124_40_292e71bcb52a56e2a9005164118f183b.png"
                     alt="google meet logo" />
-                <span class="help-text">Meet</span>
+                <span class="text-xl">Meet</span>
             </div>
-            <div class="action-btn">
-                <i class="icon-block fa-solid fa-circle-info"></i>
-                <i class="icon-block fa-solid fa-exclamation-circle"></i>
-                <i class="icon-block fa-solid fa-cog"></i>
+            <div class="flex flex-row flex-nowrap gap-4 p-6 text-neutral-600">
+                <i class="fa-regular fa-xl fa-circle-question"></i>
+                <i class="fa-solid fa-xl fa-gear"></i>
             </div>
         </div>
-        <div class="body">
-            <div class="left-side">
-                <div class="content">
-                    <h2>Premium video meetings. Now free for everyone.</h2>
-                    <p>
-                        Google Meet, to make it free and available for all.
-                    </p>
-                    <div class="action-btn">
-                        <button class="btn green" onclick='handleNewMeeting()'>
-                            <i class="icon-block fa-solid fa-video"></i>
-                            New Meeting
-                        </button>
-                        <div class="input-block">
-                            <div class="input-section">
-                                <i class="icon-block fa-solid fa-keyboard"></i>
-                                <input id='join-meeting-input' placeholder="Enter a code or link" />
-                            </div>
-                            <button class="btn no-bg" onclick='handleJoinMeeting()'>Join</button>
+        <div class="flex-auto flex flex-row flex-wrap lg:flex-nowrap gap-8 justify-center items-stretch p-8">
+            <div class="flex flex-col gap-8 justify-center lg:h-full">
+                <h1 class="text-4xl text-black text-center lg:text-left">Premium video meetings. Now free for everyone.
+                </h1>
+                <p class="text-center lg:text-left p-2">
+                    We re-engineered the service that we built for secure business meetings, Google Meet, to make it
+                    free and available for all.
+                </p>
+                <div class="flex flex-row flex-wrap gap-8">
+                    <button class="rounded-md bg-blue-600 text-white whitespace-nowrap p-2"
+                        onclick='handleNewMeeting()'>
+                        <i class="fa-solid fa-video"></i>
+                        <span class="ml-2">New Meeting</span>
+                    </button>
+                    <div class="flex flex-row flex-wrap gap-4">
+                        <div
+                            class="flex flex-row flex-nowrap p-2 gap-3 border-2 rounded-md items-center hover:border-blue-600">
+                            <i class="icon-block fa-solid fa-keyboard"></i>
+                            <input id='join-meeting-input' class="outline-none border-none"
+                                placeholder="Enter a code or link" />
                         </div>
+                        <button class="py-2 px-4 hover:bg-blue-100" onclick='handleJoinMeeting()'>Join</button>
                     </div>
                 </div>
-                <div class="help-text">
-                    <a href="/">Learn more</a> about Google Meet
-                </div>
+                <div><a href="/" class="text-blue-600 underline">Learn more</a> about Google Meet</div>
             </div>
-            <div class="right-side">
-                <div class="content">
-                    <img src="https://www.gstatic.com/meet/google_meet_marketing_ongoing_meeting_grid_427cbb32d746b1d0133b898b50115e96.jpg"
-                        alt="group meeting" />
-                </div>
+            <div class="flex flex-col flex-nowrap justify-center gap-6">
+                <img src="https://www.gstatic.com/meet/user_edu_safety_light_e04a2bbb449524ef7e49ea36d5f25b65.svg"
+                    alt="meeting safe logo" />
+                <h3 class="text-2xl text-center font-bold text-black">Your Meeting is safe</h3>
+                <p class="text-center">No one can join a meeting unless invited or admitted by the host</p>
+
             </div>
         </div>
     </div>
     <script>
         function handleJoinMeeting() {
             let id = document.getElementById('join-meeting-input').value;
-            window.location = `meeting.html?id=${id}`;
+            window.location = `meeting?id=${id}`;
         }
 
         function handleNewMeeting() {
             let id = generateId();
-            window.location = `meeting.html?id=${id}`;
+            window.location = `meeting?id=${id}`;
         }
 
         function generateId() {

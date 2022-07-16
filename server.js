@@ -1,10 +1,93 @@
+require('dotenv').config();
 const express = require("express");
 const port = process.env.PORT || 3000;
 const path = require('path');
 const app = express();
 const cors = require('cors');
+const cookie = require('cookie');
+const cookieParser = require('cookie-parser');
+const { OAuth2Client } = require('google-auth-library');
+const clientId = process.env.CLIENT_ID;
+
+if (!clientId) {
+    console.log('Please set client id (Google OAuth 2.0) in .env file');
+    process.exit();
+}
+
+const client = new OAuth2Client(clientId);
+const jwt = require('jsonwebtoken');
+const secretKey = process.env.JWT_SECRET_KEY;
+const jwtCookie = process.env.JWT_COOKIE_NAME || 'jwt_cookie';
 
 app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public/index.html'));
+});
+
+app.get('/login', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public/login.html'));
+});
+
+let userData = {};
+
+app.post('/auth/google', (req, res) => {
+    client.verifyIdToken({
+        idToken: req.body.credential,
+        audience: clientId,
+    }).then((ticket) => {
+        const payload = ticket.getPayload();
+        const email = payload.email;
+        const name = payload.name;
+        const picture = payload.picture;
+        const data = {
+            name,
+            email,
+            picture,
+        }
+
+        userData[email] = {};
+        userData[email].name = name;
+        userData[email].picture = picture;
+
+        const token = jwt.sign(data, secretKey);
+        res.cookie(jwtCookie, token, {
+            maxAge: 24 * 60 * 60 * 1000,
+            httpOnly: true,
+            sameSite: 'lax'
+        });
+
+        if (req.query.id)
+            res.redirect(`/meeting?id=${req.query.id}`);
+        else
+            res.redirect('/');
+    }
+    ).catch((e) => {
+        res.status(401).send("Sorry! We are not able to sign you in. Please <a href='/login'>sign in</a> again");
+    });
+});
+
+app.get('/meeting', (req, res) => {
+    if (!req.query.id) {
+        res.status(400).send('Meeting Id is missing. Please enter meeting id in <a href="/">home</a> or create a new meeting.');
+    }
+
+    let token = req.cookies[jwtCookie];
+
+    if (!token)
+        res.status(401).redirect(`/login?id=${req.query.id}`);
+    else
+        jwt.verify(token, secretKey, (err, data) => {
+            if (err)
+                res.status(401).redirect(`/login?id=${req.query.id}`);
+
+            res.sendFile(path.join(__dirname, 'public/meeting.html'));
+        });
+});
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 server = app.listen(port, () => {
@@ -17,14 +100,46 @@ const io = (module.exports.io = require('socket.io')(server, {
     }
 }));
 
+function isAuthenticated(socket) {
+    const cookies = cookie.parse(socket.handshake.headers.cookie);
+    const token = cookies[jwtCookie];
+    let flag;
+
+    jwt.verify(token, secretKey, (err, data) => {
+        if (err) {
+            flag = false;
+            return;
+        }
+
+        console.log(data);
+        socket.data.email = data.email;
+        socket.data.name = data.name;
+        socket.data.picture = data.picture;
+        flag = true;
+    });
+
+    return flag;
+}
+
+io.use((socket, next) => {
+    if (isAuthenticated(socket)) {
+        next();
+    }
+    else {
+        next(new Error("Authentication Error"));
+    }
+});
+
 let meetings = {};
 let roomBoard = {};
 
 io.on('connect', (socket) => {
     console.log(`Socket Id ${socket.id} connected.`);
+    socket.emit('name email picture', socket.data.name, socket.data.email, socket.data.picture);
 
-    socket.on('join request', (userId, meetingId, isMicOn = true, isVidOn = true) => {
-        console.log(`User ${userId} want to join in Meeting ${meetingId}`);
+    socket.on('join request', (meetingId, isMicOn = true, isVidOn = true) => {
+        console.log(`User ${socket.data.name} want to join in Meeting ${meetingId}`);
+
         socket.join(meetingId);
         socket.data.meetingId = meetingId;
 
@@ -32,7 +147,9 @@ io.on('connect', (socket) => {
             meetings[meetingId] = {};
 
         meetings[meetingId][socket.id] = {};
-        meetings[meetingId][socket.id].userId = userId;
+        meetings[meetingId][socket.id].name = socket.data.name;
+        meetings[meetingId][socket.id].email = socket.data.email;
+        meetings[meetingId][socket.id].picture = socket.data.picture;
         meetings[meetingId][socket.id].isMicOn = isMicOn;
         meetings[meetingId][socket.id].isVidOn = isVidOn;
 
@@ -77,7 +194,7 @@ io.on('connect', (socket) => {
 
     socket.on('new message', (msg) => {
         console.log(`new message reieved from ${socket.id} : ${msg}`)
-        socket.to(socket.data.meetingId).emit('new message', meetings[socket.data.meetingId][socket.id].userId, msg);
+        socket.to(socket.data.meetingId).emit('new message', meetings[socket.data.meetingId][socket.id].name, msg);
     });
 
     socket.on('get canvas', () => {

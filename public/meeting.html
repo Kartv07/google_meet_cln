@@ -5,10 +5,9 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="./css/meeting.css">
+    <title>Google Meeti, Free Meetings Anytime</title>
     <script src="https://kit.fontawesome.com/9bb8a25212.js" crossorigin="anonymous"></script>
-    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
+    <link rel="stylesheet" href="./css/main.css">
 </head>
 
 <body class="bg-neutral-800 text-white">
@@ -16,34 +15,10 @@
         <section id="message-box" style="visibility: hidden;"
             class="fixed inset-0 bg-[#00000099] z-10 flex justify-center items-center">
         </section>
-        <section id='username-popup' class="fixed inset-0 bg-neutral-100 z-20 flex justify-center items-center">
-            <div class="p-6 bg-white shadow-md text-neutral-600">
-                <h2 class="mb-6 font-bold text-center text-lg">Enter Your Username</h2>
-                <input class="text-sm [outline:none] border-solid border-b-2 border-blue-600"
-                    placeholder="username"></input>
-                <div class="w-full flex justify-end mt-4 font-bold"><button id='close-username-popup'
-                        class="text-blue-600 p-2">OK</button>
-                </div>
-            </div>
-        </section>
 
         <section class="flex-auto flex flex-nowrap flex-row items-stretch overflow-auto">
             <main id="video-container" class="flex-auto overflow-auto flex justify-center items-center p-2">
                 <div id="user-container" class="hidden w-full h-full">
-                    <div id="my-container" class="w-full h-full min-w-[256px] min-h-48 bg-black relative">
-                        <div class="w-full h-full flex items-center justify-center">
-                            <video id="my-media" class="w-full h-full" autoplay playsinline>
-                            </video>
-                        </div>
-                        <h3 id="my-name"
-                            class="max-w-full absolute p-4 bottom-0 left-0 overflow-hidden text-ellipsis whitespace-nowrap">
-                            You </h3>
-                        <div class="mic-icon absolute p-3 bottom-0 right-0 cursor-pointer text-red-600">
-                            <i class="fa-solid fa-microphone-slash"></i>
-                        </div>
-                        <div class="vid-icon absolute top-[50%] left-[50%] [transform:translate(-50%,-50%)]"><i
-                                class="fa-solid fa-video-slash fa-5x"></i></div>
-                    </div>
                 </div>
                 <div id="whiteboard-container" class=" w-full h-full m-w-48 m-h-48 bg-white relative">
                     <canvas id="whiteboard" class="bg-white" height="1000" width="1000"></canvas>
@@ -113,8 +88,7 @@
                         <input type="text" placeholder=' search' class="[outline:none] flex-auto" />
                     </div>
                     <div class='font-bold px-4'>In Call</div>
-                    <div id="participant-container"
-                        class='flex-auto flex flex-col flex-nowrap overflow-auto gap-2 mb-1'>
+                    <div id="participant-container" class='flex-auto flex flex-col flex-nowrap overflow-auto mb-1'>
                     </div>
                 </div>
                 <div id="messenger"
@@ -174,7 +148,7 @@
                     <i class="fa-solid fa-phone"></i>
                 </button>
             </div>
-            <div class="flex-none flex flex-row flex-nowrap justify-center gap-2 px-4">
+            <div class="flex-none flex flex-row flex-nowrap justify-center px-4">
                 <button id="show_meeting_info"
                     class="w-12 h-12 text-lg cursor-pointer rounded-full hover:bg-[#ffffff30] flex justify-center items-center">
                     <i class="fa-solid fa-info-circle"></i>
@@ -192,7 +166,6 @@
     </main>
     <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
     <script src="/socket.io/socket.io.js"></script>
-    <script src="./js/connect.js"></script>
     <script src="./js/meeting.js"></script>
 </body>
 
