@@ -17,10 +17,10 @@
         </section>
 
         <section class="flex-auto flex flex-nowrap flex-row items-stretch overflow-auto">
-            <main id="video-container" class="flex-auto overflow-auto flex justify-center items-center p-2">
-                <div id="user-container" class="hidden w-full h-full">
+            <main id="video-container" class="relative flex-auto overflow-auto flex justify-center items-center p-2">
+                <div id="user-container" class="w-full h-full">
                 </div>
-                <div id="whiteboard-container" class=" w-full h-full m-w-48 m-h-48 bg-white relative">
+                <div id="whiteboard-container" class="invisible absolute inset-0 w-full h-full m-w-48 m-h-48 bg-white">
                     <canvas id="whiteboard" class="bg-white" height="1000" width="1000"></canvas>
                     <div
                         class="absolute left-2 top-1 bottom-1 flex flex-col flex-nowrap overflow-auto justify-center gap-2">

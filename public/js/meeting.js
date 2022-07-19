@@ -103,8 +103,7 @@ setInterval(() => {
 }, 60000);
 
 fitToContainer(canvas);
-userContainer.classList.toggle('hidden');
-whiteboardContainer.classList.toggle('hidden');
+
 
 socket.on('get canvas', url => {
     let img = new Image();
@@ -594,10 +593,8 @@ function toggleWhiteBoard() {
         toggleWhiteBoardBtn.classList.replace('hover:bg-red-500', 'hover:bg-[#ffffff30]');
     }
 
-    userContainer.classList.toggle('hidden');
-    whiteboardContainer.classList.toggle('hidden');
+    whiteboardContainer.classList.toggle('invisible');
 }
-
 
 function handleAction(msg, socketId) {
     // console.log(`Action recieved from ${socketId}`, msg);
